@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Test - Solo Trader Platform</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        iframe { width: 100%; height: 600px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Solo Trader Platform - Manual Testing</h1>
+    
+    <div class="test-section">
+        <h2>Application Load Test</h2>
+        <p>Testing if the application loads correctly in an iframe:</p>
+        <iframe src="http://localhost:5175" id="appFrame"></iframe>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults">
+            <p>Loading tests...</p>
+        </div>
+    </div>
+
+    <script>
+        // Test results
+        const results = [];
+        
+        // Test 1: Check if iframe loads
+        setTimeout(() => {
+            const iframe = document.getElementById('appFrame');
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc.readyState === 'complete') {
+                    results.push('✅ Application iframe loaded successfully');
+                } else {
+                    results.push('⚠️ Application iframe loading...');
+                }
+            } catch (e) {
+                results.push('❌ Cannot access iframe content (CORS or loading issue)');
+            }
+            
+            // Update results
+            document.getElementById('testResults').innerHTML = results.join('<br>');
+        }, 3000);
+
+        // Test 2: Check application accessibility
+        fetch('http://localhost:5175')
+            .then(response => {
+                if (response.ok) {
+                    results.push('✅ Application is accessible via HTTP');
+                } else {
+                    results.push('❌ Application HTTP request failed');
+                }
+                document.getElementById('testResults').innerHTML = results.join('<br>');
+            })
+            .catch(error => {
+                results.push('❌ Application is not accessible: ' + error.message);
+                document.getElementById('testResults').innerHTML = results.join('<br>');
+            });
+    </script>
+</body>
+</html>
